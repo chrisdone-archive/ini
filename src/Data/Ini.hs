@@ -10,7 +10,7 @@
 --
 --  * Values can be empty.
 --
---  * Keys cannot contain @:@, @=@ @[@, or @]@.
+--  * Keys cannot contain @:@, @=@, @[@, or @]@.
 --
 --  * Comments are not supported at this time.
 --

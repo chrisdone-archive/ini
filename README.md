@@ -5,11 +5,11 @@ Quick and easy configuration files in the INI format for Haskell.
 
 Format rules and recommendations:
 
-* The : syntax is space-sensitive.
+* The `:` syntax is space-sensitive.
 * Keys are case-sensitive.
 * Lower-case is recommended.
 * Values can be empty.
-* Keys cannot contain :, = [, or ].
+* Keys cannot contain `:`, `=`, `[`, or `]`.
 * Comments are not supported at this time.
 
 An example configuration file:
