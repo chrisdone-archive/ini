@@ -1,0 +1,23 @@
+name:                ini
+version:             0.0.0
+synopsis:            Quick and easy configuration files in the INI format.
+description:         Simple, easy and fast configuration files in the INI format.
+license:             BSD3
+license-file:        LICENSE
+author:              Chris Done
+maintainer:          chrisdone@gmail.com
+copyright:           2013 Chris Done
+category:            Data, Configuration
+build-type:          Simple
+cabal-version:       >=1.8
+
+library
+  hs-source-dirs:    src/
+  ghc-options:       -Wall -O2
+  extensions:        OverloadedStrings
+  exposed-modules:   Data.Ini
+  build-depends:     base >= 4 && <5,
+                     attoparsec,
+                     text,
+                     aeson,
+                     unordered-containers
