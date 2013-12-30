@@ -26,5 +26,6 @@ Parsing example:
 
 ``` haskell
 > parseIni "[SERVER]\nport: 6667\nhostname: localhost"
-Right (Ini {unIni = fromList [("SERVER",fromList [("hostname","localhost"),("port","6667")])]})
+Right (Ini {unIni = fromList [("SERVER",fromList [("hostname","localhost")
+                                                 ,("port","6667")])]})
 ```
