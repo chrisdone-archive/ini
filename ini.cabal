@@ -1,7 +1,7 @@
 name:                ini
-version:             0.0.0
+version:             0.0.1
 synopsis:            Quick and easy configuration files in the INI format.
-description:         Simple, easy and fast configuration files in the INI format.
+description:         Quick and easy configuration files in the INI format.
 license:             BSD3
 license-file:        LICENSE
 author:              Chris Done

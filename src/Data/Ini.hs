@@ -84,7 +84,7 @@ printIni (Ini sections) =
           "[" <> name <> "]\n" <>
           T.concat (map buildPair (M.toList pairs))
         buildPair (name,value) =
-          name <> ": " <> value
+          name <> ": " <> value <> "\n"
 
 -- | Parser for an INI.
 iniParser :: Parser Ini
