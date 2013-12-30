@@ -5,6 +5,7 @@ Quick and easy configuration files in the INI format for Haskell.
 
 Format rules and recommendations:
 
+* `foo: bar` or `foo=bar` are allowed.
 * The `:` syntax is space-sensitive.
 * Keys are case-sensitive.
 * Lower-case is recommended.
@@ -14,13 +15,15 @@ Format rules and recommendations:
 
 An example configuration file:
 
-    [SERVER]
-    port=6667
-    hostname=localhost
-    [AUTH]
-    user: hello
-    pass: world
-    salt:
+``` ini
+[SERVER]
+port=6667
+hostname=localhost
+[AUTH]
+user=hello
+pass=world
+salt=
+```
 
 Parsing example:
 
