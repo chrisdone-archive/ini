@@ -23,6 +23,7 @@ hostname=localhost
 [AUTH]
 user=hello
 pass=world
+# Salt can be an empty string.
 salt=
 ```
 
