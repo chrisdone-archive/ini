@@ -46,7 +46,8 @@ Right "localhost"
 Parsing:
 
 ``` haskell
-> parseIni "[SERVER]\nport: 6667\nhostname: localhost" >>= readValue "SERVER" "port" decimal
+> parseIni "[SERVER]\nport: 6667\nhostname: localhost" >>=
+  readValue "SERVER" "port" decimal
 Right 6667
 ```
 
