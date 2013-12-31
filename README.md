@@ -33,7 +33,21 @@ Parsing example:
 > parseIni "[SERVER]\nport: 6667\nhostname: localhost"
 Right (Ini {unIni = fromList [("SERVER",fromList [("hostname","localhost")
                                                  ,("port","6667")])]})
+```
+
+Extracting values:
+
+``` haskell
 > parseIni "[SERVER]\nport: 6667\nhostname: localhost" >>=
   lookupValue "SERVER" "hostname"
 Right "localhost"
 ```
+
+Parsing:
+
+``` haskell
+> parseIni "[SERVER]\nport: 6667\nhostname: localhost" >>= readValue "SERVER" "port" decimal
+Right 6667
+```
+
+Import `Data.Text.Read` to use `decimal`.
