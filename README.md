@@ -33,4 +33,7 @@ Parsing example:
 > parseIni "[SERVER]\nport: 6667\nhostname: localhost"
 Right (Ini {unIni = fromList [("SERVER",fromList [("hostname","localhost")
                                                  ,("port","6667")])]})
+> fmap (lookupValue "SERVER" "hostname")
+       (parseIni "[SERVER]\nport: 6667\nhostname: localhost")
+Right (Right "localhost")
 ```

@@ -77,8 +77,8 @@ parseIni :: Text -> Either String Ini
 parseIni = parseOnly iniParser
 
 -- | Lookup values in the config.
-lookupValue :: Ini -> Text -> Text -> Either String Text
-lookupValue (Ini ini) name key =
+lookupValue :: Text -> Text -> Ini -> Either String Text
+lookupValue name key (Ini ini) =
   case M.lookup name ini of
     Nothing -> Left ("Couldn't find section: " ++ T.unpack name)
     Just section ->
@@ -87,10 +87,11 @@ lookupValue (Ini ini) name key =
         Just value -> return value
 
 -- | Read a value using a reader from "Data.Text.Read".
-readValue :: Ini -> Text -> Text -> (Text -> Either String (a, Text))
+readValue :: Text -> Text -> (Text -> Either String (a, Text))
+          -> Ini
           -> Either String a
-readValue ini section key f =
-  lookupValue ini section key >>= f >>= return . fst
+readValue section key f ini =
+  lookupValue section key ini >>= f >>= return . fst
 
 -- | Print the INI config to a file.
 writeIniFile :: FilePath -> Ini -> IO ()
