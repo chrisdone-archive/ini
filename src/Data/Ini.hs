@@ -34,8 +34,10 @@
 
 module Data.Ini
   (-- * Reading
-   parseIniFile
+   readIniFile
   ,parseIni
+  ,lookupValue
+  ,readValue
    -- * Writing
   ,writeIniFile
   ,printIni
@@ -65,12 +67,28 @@ newtype Ini = Ini { unIni :: HashMap Text (HashMap Text Text) }
   deriving (Show)
 
 -- | Parse an INI file.
-parseIniFile :: FilePath -> IO (Either String Ini)
-parseIniFile = fmap parseIni . T.readFile
+readIniFile :: FilePath -> IO (Either String Ini)
+readIniFile = fmap parseIni . T.readFile
 
 -- | Parse an INI config.
 parseIni :: Text -> Either String Ini
 parseIni = parseOnly iniParser
+
+-- | Lookup values in the config.
+lookupValue :: Ini -> Text -> Text -> Either String Text
+lookupValue (Ini ini) name key =
+  case M.lookup name ini of
+    Nothing -> Left ("Couldn't find section: " ++ T.unpack name)
+    Just section ->
+      case M.lookup key section of
+        Nothing -> Left ("Couldn't find key: " ++ T.unpack key)
+        Just value -> return value
+
+-- | Read a value using a reader from "Data.Text.Read".
+readValue :: Ini -> Text -> Text -> (Text -> Either String (a, Text))
+          -> Either String a
+readValue ini section key f =
+  lookupValue ini section key >>= f >>= return . fst
 
 -- | Print the INI config to a file.
 writeIniFile :: FilePath -> Ini -> IO ()
@@ -93,9 +111,9 @@ iniParser = fmap Ini (fmap M.fromList (many1 sectionParser))
 -- | A section. Format: @[foo]@. Conventionally, @[FOO]@.
 sectionParser :: Parser (Text,HashMap Text Text)
 sectionParser =
-  do char '['
+  do _ <- char '['
      name <- takeWhile (\c -> c /=']' && c /= '[')
-     char ']'
+     _ <- char ']'
      skipEndOfLine
      values <- many1 keyValueParser
      return (name,M.fromList values)
