@@ -10,16 +10,18 @@
 --
 --  * Values can be empty.
 --
---  * Keys cannot contain @:@, @=@, @[@, or @]@.
+--  * Keys cannot key separators, section delimiters, or comment markers.
 --
---  * Comments are not supported at this time.
+--  * Comments must start at the beginning of the line and start with @;@ or @#@.
 --
 -- An example configuration file:
 --
 -- @
+-- # Some comment.
 -- [SERVER]
 -- port=6667
 -- hostname=localhost
+-- ; another comment here
 -- [AUTH]
 -- user: hello
 -- pass: world
@@ -111,7 +113,8 @@ iniParser = fmap Ini (fmap M.fromList (many1 sectionParser))
 -- | A section. Format: @[foo]@. Conventionally, @[FOO]@.
 sectionParser :: Parser (Text,HashMap Text Text)
 sectionParser =
-  do _ <- char '['
+  do skipComments
+     _ <- char '['
      name <- takeWhile (\c -> c /=']' && c /= '[')
      _ <- char ']'
      skipEndOfLine
@@ -121,7 +124,8 @@ sectionParser =
 -- | A key-value pair. Either @foo: bar@ or @foo=bar@.
 keyValueParser :: Parser (Text,Text)
 keyValueParser =
-  do key <- takeWhile1 (\c -> not (isDelim c || c == '[' || c == ']'))
+  do skipComments
+     key <- takeWhile1 (\c -> not (isDelim c || c == '[' || c == ']'))
      delim <- satisfy isDelim
      value <- fmap (clean delim) (takeWhile (not . isEndOfLine))
      skipEndOfLine
@@ -136,3 +140,10 @@ isDelim x = x == '=' || x == ':'
 -- | Skip end of line and whitespace beyond.
 skipEndOfLine :: Parser ()
 skipEndOfLine = skipWhile (\c -> isEndOfLine c || isSpace c)
+
+-- | Skip comments starting at the beginning of the line.
+skipComments :: Parser ()
+skipComments =
+  skipMany (do _ <- satisfy (\c -> c == ';' || c == '#')
+               skipWhile (not . isEndOfLine)
+               skipEndOfLine)

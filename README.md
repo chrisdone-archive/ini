@@ -11,11 +11,12 @@ Format rules and recommendations:
 * Lower-case is recommended.
 * Values can be empty.
 * Keys cannot contain `:`, `=`, `[`, or `]`.
-* Comments are not supported at this time.
+* Comments must start at the beginning of the line with `;` or `#`.
 
 An example configuration file:
 
 ``` ini
+# Some comment.
 [SERVER]
 port=6667
 hostname=localhost
