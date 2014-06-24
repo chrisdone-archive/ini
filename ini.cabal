@@ -1,5 +1,5 @@
 name:                ini
-version:             0.2.0
+version:             0.2.1
 synopsis:            Quick and easy configuration files in the INI format.
 description:         Quick and easy configuration files in the INI format.
 license:             BSD3
