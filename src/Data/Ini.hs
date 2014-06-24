@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 -- | Clean configuration files in the INI format.
 --
 -- Format rules and recommendations:
@@ -40,6 +42,7 @@ module Data.Ini
   ,parseIni
   ,lookupValue
   ,readValue
+  ,parseValue
    -- * Writing
   ,writeIniFile
   ,printIni
@@ -53,6 +56,7 @@ module Data.Ini
   where
 
 import           Control.Monad
+import           Control.Applicative ((<*))
 import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
 import           Data.Char
@@ -92,6 +96,13 @@ readValue :: Text -> Text -> (Text -> Either String (a, Text))
           -> Either String a
 readValue section key f ini =
   lookupValue section key ini >>= f >>= return . fst
+
+-- | Parse a value using a reader from "Data.Attoparsec.Text".
+parseValue :: Text -> Text -> Parser a
+           -> Ini
+           -> Either String a
+parseValue section key f ini =
+  lookupValue section key ini >>= parseOnly (f <* (skipSpace >> endOfInput))
 
 -- | Print the INI config to a file.
 writeIniFile :: FilePath -> Ini -> IO ()
