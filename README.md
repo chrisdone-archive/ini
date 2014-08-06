@@ -1,4 +1,4 @@
-ini
+ini [![Hackage](https://img.shields.io/hackage/v/ini.svg?style=flat)](https://hackage.haskell.org/package/ini)
 =====
 
 Quick and easy configuration files in the INI format for Haskell.
