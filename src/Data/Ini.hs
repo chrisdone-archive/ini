@@ -131,7 +131,7 @@ sectionParser =
      _ <- char ']'
      skipEndOfLine
      values <- many1 keyValueParser
-     return (name,M.fromList values)
+     return (T.strip name, M.fromList values)
 
 -- | A key-value pair. Either @foo: bar@ or @foo=bar@.
 keyValueParser :: Parser (Text,Text)
@@ -141,7 +141,7 @@ keyValueParser =
      delim <- satisfy isDelim
      value <- fmap (clean delim) (takeWhile (not . isEndOfLine))
      skipEndOfLine
-     return (key,value)
+     return (T.strip key, T.strip value)
   where clean ':' = T.drop 1
         clean _   = id
 
