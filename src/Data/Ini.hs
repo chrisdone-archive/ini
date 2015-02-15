@@ -56,7 +56,7 @@ module Data.Ini
   where
 
 import           Control.Monad
-import           Control.Applicative ((<*))
+import           Control.Applicative ((<*), many)
 import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
 import           Data.Char
@@ -120,7 +120,7 @@ printIni (Ini sections) =
 
 -- | Parser for an INI.
 iniParser :: Parser Ini
-iniParser = fmap Ini (fmap M.fromList (many1 sectionParser))
+iniParser = fmap (Ini . M.fromList) (many sectionParser)
 
 -- | A section. Format: @[foo]@. Conventionally, @[FOO]@.
 sectionParser :: Parser (Text,HashMap Text Text)
@@ -130,7 +130,7 @@ sectionParser =
      name <- takeWhile (\c -> c /=']' && c /= '[')
      _ <- char ']'
      skipEndOfLine
-     values <- many1 keyValueParser
+     values <- many keyValueParser
      return (T.strip name, M.fromList values)
 
 -- | A key-value pair. Either @foo: bar@ or @foo=bar@.
