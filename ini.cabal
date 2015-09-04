@@ -6,6 +6,8 @@ license:             BSD3
 license-file:        LICENSE
 author:              Chris Done
 maintainer:          chrisdone@gmail.com
+homepage:            http://github.com/chrisdone/ini
+bug-reports:         http://github.com/chrisdone/ini/issues
 copyright:           2013 Chris Done
 category:            Data, Configuration
 build-type:          Simple
@@ -20,3 +22,7 @@ library
                      attoparsec,
                      text,
                      unordered-containers
+
+source-repository head
+  type:     git
+  location: http://github.com/chrisdone/inil.git
