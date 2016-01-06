@@ -45,8 +45,14 @@ module Data.Ini
   ,readValue
   ,parseValue
    -- * Writing
-  ,writeIniFile
   ,printIni
+  ,writeIniFile
+   -- * Advanced writing
+  ,KeySeparator(..)
+  ,WriteIniSettings(..)
+  ,defaultWriteIniSettings
+  ,printIniWith
+  ,writeIniFileWith
    -- * Types
   ,Ini(..)
    -- * Parsers
@@ -107,17 +113,45 @@ parseValue section key f ini =
 
 -- | Print the INI config to a file.
 writeIniFile :: FilePath -> Ini -> IO ()
-writeIniFile fp = T.writeFile fp . printIni
+writeIniFile = writeIniFileWith defaultWriteIniSettings
 
 -- | Print an INI config.
 printIni :: Ini -> Text
-printIni (Ini sections) =
+printIni = printIniWith defaultWriteIniSettings
+
+-- | Either @:@ or @=@.
+data KeySeparator
+  = ColonKeySeparator
+  | EqualsKeySeparator
+  deriving (Eq, Show)
+
+-- | Settings determining how an INI file is written.
+data WriteIniSettings = WriteIniSettings
+  { writeIniKeySeparator :: KeySeparator
+  } deriving (Show)
+
+-- | The default settings for writing INI files.
+defaultWriteIniSettings :: WriteIniSettings
+defaultWriteIniSettings = WriteIniSettings
+  { writeIniKeySeparator = ColonKeySeparator
+  }
+
+-- | Print the INI config to a file.
+writeIniFileWith :: WriteIniSettings -> FilePath -> Ini -> IO ()
+writeIniFileWith wis fp = T.writeFile fp . printIniWith wis
+
+-- | Print an INI config.
+printIniWith :: WriteIniSettings -> Ini -> Text
+printIniWith wis (Ini sections) =
   T.concat (map buildSection (M.toList sections))
   where buildSection (name,pairs) =
           "[" <> name <> "]\n" <>
           T.concat (map buildPair (M.toList pairs))
         buildPair (name,value) =
-          name <> ": " <> value <> "\n"
+          name <> separator <> value <> "\n"
+        separator = case writeIniKeySeparator wis of
+          ColonKeySeparator  -> ": "
+          EqualsKeySeparator -> "="
 
 -- | Parser for an INI.
 iniParser :: Parser Ini
