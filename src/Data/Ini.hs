@@ -44,6 +44,8 @@ module Data.Ini
   ,lookupValue
   ,readValue
   ,parseValue
+  ,sections
+  ,keys
    -- * Writing
   ,printIni
   ,writeIniFile
@@ -97,6 +99,17 @@ lookupValue name key (Ini ini) =
         Nothing -> Left ("Couldn't find key: " ++ T.unpack key)
         Just value -> return value
 
+-- | Get the sections in the config.
+sections :: Ini -> [Text]
+sections (Ini ini) = M.keys ini
+
+-- | Get the keys in a section.
+keys :: Text -> Ini -> Either String [Text]
+keys name (Ini ini) =
+  case M.lookup name ini of
+    Nothing -> Left ("Couldn't find section: " ++ T.unpack name)
+    Just section -> Right (M.keys section)
+
 -- | Read a value using a reader from "Data.Text.Read".
 readValue :: Text -> Text -> (Text -> Either String (a, Text))
           -> Ini
@@ -142,8 +155,8 @@ writeIniFileWith wis fp = T.writeFile fp . printIniWith wis
 
 -- | Print an INI config.
 printIniWith :: WriteIniSettings -> Ini -> Text
-printIniWith wis (Ini sections) =
-  T.concat (map buildSection (M.toList sections))
+printIniWith wis (Ini ini) =
+  T.concat (map buildSection (M.toList ini))
   where buildSection (name,pairs) =
           "[" <> name <> "]\n" <>
           T.concat (map buildPair (M.toList pairs))
