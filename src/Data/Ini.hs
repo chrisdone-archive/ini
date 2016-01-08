@@ -62,7 +62,7 @@ module Data.Ini
   )
   where
 
-import           Control.Applicative        (many, (<*))
+import           Control.Applicative        (many)
 import           Control.Monad
 import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
