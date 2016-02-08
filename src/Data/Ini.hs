@@ -173,7 +173,9 @@ iniParser = fmap (Ini . M.fromList) (many sectionParser)
 -- | A section. Format: @[foo]@. Conventionally, @[FOO]@.
 sectionParser :: Parser (Text,HashMap Text Text)
 sectionParser =
-  do skipComments
+  do skipEndOfLine
+     skipComments
+     skipEndOfLine
      _ <- char '['
      name <- takeWhile (\c -> c /=']' && c /= '[')
      _ <- char ']'
@@ -184,7 +186,9 @@ sectionParser =
 -- | A key-value pair. Either @foo: bar@ or @foo=bar@.
 keyValueParser :: Parser (Text,Text)
 keyValueParser =
-  do skipComments
+  do skipEndOfLine
+     skipComments
+     skipEndOfLine
      key <- takeWhile1 (\c -> not (isDelim c || c == '[' || c == ']'))
      delim <- satisfy isDelim
      value <- fmap (clean delim) (takeWhile (not . isEndOfLine))
