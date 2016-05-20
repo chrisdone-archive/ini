@@ -25,4 +25,4 @@ library
 
 source-repository head
   type:     git
-  location: http://github.com/chrisdone/inil.git
+  location: http://github.com/chrisdone/ini.git
