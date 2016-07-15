@@ -52,3 +52,7 @@ Right 6667
 ```
 
 Import `Data.Text.Read` to use `decimal`.
+
+## Related packages
+
+[`ini-qq`](https://hackage.haskell.org/package/ini-qq) provides a quasiquoter for INI.
