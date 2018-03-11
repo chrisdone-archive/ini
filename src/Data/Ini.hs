@@ -79,7 +79,7 @@ import           Prelude                    hiding (takeWhile)
 
 -- | An INI configuration.
 newtype Ini = Ini { unIni :: HashMap Text (HashMap Text Text) }
-  deriving (Show, Monoid)
+  deriving (Show, Semigroup, Monoid)
 
 -- | Parse an INI file.
 readIniFile :: FilePath -> IO (Either String Ini)
