@@ -22,6 +22,8 @@ library
                      attoparsec,
                      text,
                      unordered-containers
+  if !impl(ghc >= 8)
+    build-depends: semigroups >= 0.10 && < 0.19
 
 source-repository head
   type:     git
