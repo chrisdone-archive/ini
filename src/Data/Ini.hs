@@ -204,7 +204,7 @@ isDelim x = x == '=' || x == ':'
 
 -- | Skip end of line and whitespace beyond.
 skipEndOfLine :: Parser ()
-skipEndOfLine = skipWhile (\c -> isEndOfLine c)
+skipEndOfLine = skipWhile isSpace
 
 -- | Skip comments starting at the beginning of the line.
 skipComments :: Parser ()
