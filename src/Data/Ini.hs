@@ -90,8 +90,15 @@ readIniFile = fmap parseIni . T.readFile
 parseIni :: Text -> Either String Ini
 parseIni = parseOnly iniParser
 
--- | Lookup values in the config.
-lookupValue :: Text -> Text -> Ini -> Either String Text
+-- | Lookup one value in the config.
+--
+-- Example:
+--
+-- >>> parseIni "[SERVER]\nport: 6667\nhostname: localhost" >>= lookupValue "SERVER" "hostname"
+-- Right "localhost"
+lookupValue :: Text -- ^ Section name
+            -> Text -- ^ Key
+            -> Ini -> Either String Text
 lookupValue name key (Ini ini) =
   case M.lookup name ini of
     Nothing -> Left ("Couldn't find section: " ++ T.unpack name)
@@ -101,25 +108,40 @@ lookupValue name key (Ini ini) =
         Just value -> return value
 
 -- | Get the sections in the config.
+--
+-- Example:
+--
+-- >>> sections <$> parseIni "[SERVER]\nport: 6667\nhostname: localhost"
+-- Right ["SERVER"]
 sections :: Ini -> [Text]
 sections (Ini ini) = M.keys ini
 
 -- | Get the keys in a section.
-keys :: Text -> Ini -> Either String [Text]
+--
+-- Example:
+--
+-- >>> parseIni "[SERVER]\nport: 6667\nhostname: localhost" >>= keys "SERVER"
+-- Right ["hostname","port"]
+keys :: Text -- ^ Section name
+     -> Ini -> Either String [Text]
 keys name (Ini ini) =
   case M.lookup name ini of
     Nothing -> Left ("Couldn't find section: " ++ T.unpack name)
     Just section -> Right (M.keys section)
 
 -- | Read a value using a reader from "Data.Text.Read".
-readValue :: Text -> Text -> (Text -> Either String (a, Text))
+readValue :: Text -- ^ Section name
+          -> Text -- ^ Key
+          -> (Text -> Either String (a, Text))
           -> Ini
           -> Either String a
 readValue section key f ini =
   lookupValue section key ini >>= f >>= return . fst
 
 -- | Parse a value using a reader from "Data.Attoparsec.Text".
-parseValue :: Text -> Text -> Parser a
+parseValue :: Text -- ^ Section name
+           -> Text -- ^ Key
+           -> Parser a
            -> Ini
            -> Either String a
 parseValue section key f ini =
