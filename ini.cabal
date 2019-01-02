@@ -25,6 +25,15 @@ library
   if !impl(ghc >= 8)
     build-depends: semigroups >= 0.10 && < 0.19
 
+test-suite ini-test
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: Main.hs
+  build-depends:     base >= 4 && <5
+                   , ini
+                   , hspec
+                   , unordered-containers
+
 source-repository head
   type:     git
   location: http://github.com/chrisdone/ini.git
