@@ -42,4 +42,32 @@ main =
                                      , ("port", "6667")
                                      ])
                                ]
+                         , iniGlobals = mempty
+                         })))
+              it
+                "File with globals"
+                (shouldBe
+                   (parseIni
+                      "# Some comment.\n\
+                      \port=6667\n\
+                      \hostname=localhost\n\
+                      \[AUTH]\n\
+                      \user=hello\n\
+                      \pass=world\n\
+                      \# Salt can be an empty string.\n\
+                      \salt=")
+                   (Right
+                      (Ini
+                         { iniSections =
+                             HM.fromList
+                               [ ( "AUTH"
+                                 , HM.fromList
+                                     [ ("user", "hello")
+                                     , ("salt", "")
+                                     , ("pass", "world")
+                                     ])
+                               ]
+                         , iniGlobals =
+                             HM.fromList
+                               [("hostname", "localhost"), ("port", "6667")]
                          })))))

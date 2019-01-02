@@ -83,6 +83,7 @@ import           Prelude                    hiding (takeWhile)
 data Ini =
   Ini
     { iniSections :: HashMap Text (HashMap Text Text)
+    , iniGlobals  :: HashMap Text Text
     }
   deriving (Show, Eq)
 
@@ -90,8 +91,9 @@ instance Semigroup Ini where
   (<>) = mappend
 
 instance Monoid Ini where
-  mempty = Ini {iniSections = mempty}
-  mappend x y = Ini {iniSections = iniSections x <> iniSections y}
+  mempty = Ini {iniGlobals = mempty, iniSections = mempty}
+  mappend x y =
+    Ini {iniGlobals = mempty, iniSections = iniSections x <> iniSections y}
 
 {-# DEPRECATED #-}
 unIni :: Ini -> HashMap Text (HashMap Text Text)
@@ -114,8 +116,8 @@ parseIni = parseOnly iniParser
 lookupValue :: Text -- ^ Section name
             -> Text -- ^ Key
             -> Ini -> Either String Text
-lookupValue name key (Ini ini) =
-  case M.lookup name ini of
+lookupValue name key (Ini {iniSections=secs}) =
+  case M.lookup name secs of
     Nothing -> Left ("Couldn't find section: " ++ T.unpack name)
     Just section ->
       case M.lookup key section of
@@ -129,7 +131,7 @@ lookupValue name key (Ini ini) =
 -- >>> sections <$> parseIni "[SERVER]\nport: 6667\nhostname: localhost"
 -- Right ["SERVER"]
 sections :: Ini -> [Text]
-sections (Ini ini) = M.keys ini
+sections = M.keys . iniSections
 
 -- | Get the keys in a section.
 --
@@ -139,8 +141,8 @@ sections (Ini ini) = M.keys ini
 -- Right ["hostname","port"]
 keys :: Text -- ^ Section name
      -> Ini -> Either String [Text]
-keys name (Ini ini) =
-  case M.lookup name ini of
+keys name i =
+  case M.lookup name (iniSections i) of
     Nothing -> Left ("Couldn't find section: " ++ T.unpack name)
     Just section -> Right (M.keys section)
 
@@ -193,8 +195,8 @@ writeIniFileWith wis fp = T.writeFile fp . printIniWith wis
 
 -- | Print an INI config.
 printIniWith :: WriteIniSettings -> Ini -> Text
-printIniWith wis (Ini ini) =
-  T.concat (map buildSection (M.toList ini))
+printIniWith wis i =
+  T.concat (map buildSection (M.toList (iniSections i)))
   where buildSection (name,pairs) =
           "[" <> name <> "]\n" <>
           T.concat (map buildPair (M.toList pairs))
@@ -206,7 +208,10 @@ printIniWith wis (Ini ini) =
 
 -- | Parser for an INI.
 iniParser :: Parser Ini
-iniParser = fmap (Ini . M.fromList) (many sectionParser)
+iniParser =
+  (\kv secs -> Ini {iniSections = M.fromList secs, iniGlobals = M.fromList kv}) <$>
+  many keyValueParser <*>
+  many sectionParser
 
 -- | A section. Format: @[foo]@. Conventionally, @[FOO]@.
 sectionParser :: Parser (Text,HashMap Text Text)
