@@ -42,7 +42,9 @@ module Data.Ini
    readIniFile
   ,parseIni
   ,lookupValue
+  ,lookupArray
   ,readValue
+  ,readArray
   ,parseValue
   ,sections
   ,keys
@@ -72,8 +74,9 @@ import           Data.Attoparsec.Text
 import           Data.Char
 import           Data.HashMap.Strict        (HashMap)
 import qualified Data.HashMap.Strict        as M
-import           Data.Semigroup
+import Data.Maybe
 import           Data.Monoid (Monoid)
+import           Data.Semigroup
 import           Data.Text                  (Text)
 import qualified Data.Text                  as T
 import qualified Data.Text.IO               as T
@@ -124,6 +127,28 @@ lookupValue name key (Ini {iniSections=secs}) =
         Nothing -> Left ("Couldn't find key: " ++ T.unpack key)
         Just value -> return value
 
+-- | Lookup one value in the config.
+--
+-- Example:
+--
+-- >>> parseIni "[SERVER]\nport: 6667\nhostname: localhost" >>= lookupValue "SERVER" "hostname"
+-- Right "localhost"
+lookupArray :: Text -- ^ Section name
+            -> Text -- ^ Key
+            -> Ini -> Either String [Text]
+lookupArray name key (Ini {iniSections = secs}) =
+  case M.lookup name secs of
+    Nothing -> Left ("Couldn't find section: " ++ T.unpack name)
+    Just section ->
+      case mapMaybe
+             (\(k, v) ->
+                if k == key
+                  then Just v
+                  else Nothing)
+             section of
+        [] -> Left ("Couldn't find key: " ++ T.unpack key)
+        values -> return values
+
 -- | Get the sections in the config.
 --
 -- Example:
@@ -154,6 +179,15 @@ readValue :: Text -- ^ Section name
           -> Either String a
 readValue section key f ini =
   lookupValue section key ini >>= f >>= return . fst
+
+-- | Read an array of values using a reader from "Data.Text.Read".
+readArray :: Text -- ^ Section name
+          -> Text -- ^ Key
+          -> (Text -> Either String (a, Text))
+          -> Ini
+          -> Either String [a]
+readArray section key f ini =
+  fmap (map fst) (lookupArray section key ini >>= mapM f)
 
 -- | Parse a value using a reader from "Data.Attoparsec.Text".
 parseValue :: Text -- ^ Section name
