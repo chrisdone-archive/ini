@@ -82,8 +82,8 @@ import           Prelude                    hiding (takeWhile)
 -- | An INI configuration.
 data Ini =
   Ini
-    { iniSections :: HashMap Text (HashMap Text Text)
-    , iniGlobals  :: HashMap Text Text
+    { iniSections :: HashMap Text [(Text, Text)]
+    , iniGlobals  :: [(Text, Text)]
     }
   deriving (Show, Eq)
 
@@ -97,7 +97,7 @@ instance Monoid Ini where
 
 {-# DEPRECATED #-}
 unIni :: Ini -> HashMap Text (HashMap Text Text)
-unIni = iniSections
+unIni = fmap M.fromList . iniSections
 
 -- | Parse an INI file.
 readIniFile :: FilePath -> IO (Either String Ini)
@@ -120,7 +120,7 @@ lookupValue name key (Ini {iniSections=secs}) =
   case M.lookup name secs of
     Nothing -> Left ("Couldn't find section: " ++ T.unpack name)
     Just section ->
-      case M.lookup key section of
+      case lookup key section of
         Nothing -> Left ("Couldn't find key: " ++ T.unpack key)
         Just value -> return value
 
@@ -144,7 +144,7 @@ keys :: Text -- ^ Section name
 keys name i =
   case M.lookup name (iniSections i) of
     Nothing -> Left ("Couldn't find section: " ++ T.unpack name)
-    Just section -> Right (M.keys section)
+    Just section -> Right (map fst section)
 
 -- | Read a value using a reader from "Data.Text.Read".
 readValue :: Text -- ^ Section name
@@ -199,7 +199,7 @@ printIniWith wis i =
   T.concat (map buildSection (M.toList (iniSections i)))
   where buildSection (name,pairs) =
           "[" <> name <> "]\n" <>
-          T.concat (map buildPair (M.toList pairs))
+          T.concat (map buildPair pairs)
         buildPair (name,value) =
           name <> separator <> value <> "\n"
         separator = case writeIniKeySeparator wis of
@@ -209,12 +209,12 @@ printIniWith wis i =
 -- | Parser for an INI.
 iniParser :: Parser Ini
 iniParser =
-  (\kv secs -> Ini {iniSections = M.fromList secs, iniGlobals = M.fromList kv}) <$>
+  (\kv secs -> Ini {iniSections = M.fromList secs, iniGlobals = kv}) <$>
   many keyValueParser <*>
   many sectionParser
 
 -- | A section. Format: @[foo]@. Conventionally, @[FOO]@.
-sectionParser :: Parser (Text,HashMap Text Text)
+sectionParser :: Parser (Text,[(Text, Text)])
 sectionParser =
   do skipEndOfLine
      skipComments
@@ -224,7 +224,7 @@ sectionParser =
      _ <- char ']'
      skipEndOfLine
      values <- many keyValueParser
-     return (T.strip name, M.fromList values)
+     return (T.strip name, values)
 
 -- | A key-value pair. Either @foo: bar@ or @foo=bar@.
 keyValueParser :: Parser (Text,Text)

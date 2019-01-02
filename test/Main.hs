@@ -31,18 +31,14 @@ main =
                          { iniSections =
                              HM.fromList
                                [ ( "AUTH"
-                                 , HM.fromList
-                                     [ ("user", "hello")
-                                     , ("salt", "")
-                                     , ("pass", "world")
-                                     ])
+                                 , [ ("user", "hello")
+                                   , ("pass", "world")
+                                   , ("salt", "")
+                                   ])
                                , ( "SERVER"
-                                 , HM.fromList
-                                     [ ("hostname", "localhost")
-                                     , ("port", "6667")
-                                     ])
+                                 , [("port", "6667"), ("hostname", "localhost")])
                                ]
-                         , iniGlobals = mempty
+                         , iniGlobals = []
                          })))
               it
                 "File with globals"
@@ -61,13 +57,11 @@ main =
                          { iniSections =
                              HM.fromList
                                [ ( "AUTH"
-                                 , HM.fromList
-                                     [ ("user", "hello")
-                                     , ("salt", "")
-                                     , ("pass", "world")
-                                     ])
+                                 , [ ("user", "hello")
+                                   , ("pass", "world")
+                                   , ("salt", "")
+                                   ])
                                ]
                          , iniGlobals =
-                             HM.fromList
-                               [("hostname", "localhost"), ("port", "6667")]
+                             [("port", "6667"), ("hostname", "localhost")]
                          })))))
