@@ -57,6 +57,7 @@ module Data.Ini
   ,writeIniFileWith
    -- * Types
   ,Ini(..)
+  ,unIni
    -- * Parsers
   ,iniParser
   ,sectionParser
@@ -79,8 +80,22 @@ import qualified Data.Text.IO               as T
 import           Prelude                    hiding (takeWhile)
 
 -- | An INI configuration.
-newtype Ini = Ini { unIni :: HashMap Text (HashMap Text Text) }
-  deriving (Show, Semigroup, Monoid, Eq)
+data Ini =
+  Ini
+    { iniSections :: HashMap Text (HashMap Text Text)
+    }
+  deriving (Show, Eq)
+
+instance Semigroup Ini where
+  (<>) = mappend
+
+instance Monoid Ini where
+  mempty = Ini {iniSections = mempty}
+  mappend x y = Ini {iniSections = iniSections x <> iniSections y}
+
+{-# DEPRECATED #-}
+unIni :: Ini -> HashMap Text (HashMap Text Text)
+unIni = iniSections
 
 -- | Parse an INI file.
 readIniFile :: FilePath -> IO (Either String Ini)

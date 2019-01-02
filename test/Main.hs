@@ -28,7 +28,7 @@ main =
                       \salt=")
                    (Right
                       (Ini
-                         { unIni =
+                         { iniSections =
                              HM.fromList
                                [ ( "AUTH"
                                  , HM.fromList
