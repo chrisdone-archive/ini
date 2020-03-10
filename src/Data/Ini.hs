@@ -230,7 +230,8 @@ writeIniFileWith wis fp = T.writeFile fp . printIniWith wis
 -- | Print an INI config.
 printIniWith :: WriteIniSettings -> Ini -> Text
 printIniWith wis i =
-  T.concat (map buildSection (M.toList (iniSections i)))
+  T.concat $ (map buildPair (iniGlobals i)) ++
+             (map buildSection (M.toList (iniSections i)))
   where buildSection (name,pairs) =
           "[" <> name <> "]\n" <>
           T.concat (map buildPair pairs)
