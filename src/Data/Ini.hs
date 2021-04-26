@@ -75,7 +75,6 @@ import           Data.Char
 import           Data.HashMap.Strict        (HashMap)
 import qualified Data.HashMap.Strict        as M
 import Data.Maybe
-import           Data.Monoid (Monoid)
 import           Data.Semigroup
 import           Data.Text                  (Text)
 import qualified Data.Text                  as T
