@@ -245,7 +245,8 @@ iniParser :: Parser Ini
 iniParser =
   (\kv secs -> Ini {iniSections = M.fromList secs, iniGlobals = kv}) <$>
   many keyValueParser <*>
-  many sectionParser
+  many sectionParser <*
+  (endOfInput <|> (fail . T.unpack =<< takeWhile (not . isControl)))
 
 -- | A section. Format: @[foo]@. Conventionally, @[FOO]@.
 sectionParser :: Parser (Text,[(Text, Text)])

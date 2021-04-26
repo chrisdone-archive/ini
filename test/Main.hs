@@ -64,4 +64,11 @@ main =
                                ]
                          , iniGlobals =
                              [("port", "6667"), ("hostname", "localhost")]
-                         })))))
+                         })))
+              it
+                "File with invalid keys"
+                (shouldBe
+                   (parseIni
+                      "Name=Foo\n\
+                      \Name[en_GB]=Fubar")
+                   (Left "Failed reading: Name[en_GB]=Fubar"))))
