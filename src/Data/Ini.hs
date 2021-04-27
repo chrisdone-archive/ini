@@ -75,7 +75,6 @@ import           Data.Char
 import           Data.HashMap.Strict        (HashMap)
 import qualified Data.HashMap.Strict        as M
 import Data.Maybe
-import           Data.Monoid (Monoid)
 import           Data.Semigroup
 import           Data.Text                  (Text)
 import qualified Data.Text                  as T
@@ -246,7 +245,8 @@ iniParser :: Parser Ini
 iniParser =
   (\kv secs -> Ini {iniSections = M.fromList secs, iniGlobals = kv}) <$>
   many keyValueParser <*>
-  many sectionParser
+  many sectionParser <*
+  (endOfInput <|> (fail . T.unpack =<< takeWhile (not . isControl)))
 
 -- | A section. Format: @[foo]@. Conventionally, @[FOO]@.
 sectionParser :: Parser (Text,[(Text, Text)])
