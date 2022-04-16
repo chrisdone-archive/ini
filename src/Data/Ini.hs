@@ -90,12 +90,12 @@ data Ini =
   deriving (Show, Eq)
 
 instance Semigroup Ini where
-  (<>) = mappend
+  x <> y = Ini {iniGlobals = mempty, iniSections = iniSections x <> iniSections y}
 
 instance Monoid Ini where
   mempty = Ini {iniGlobals = mempty, iniSections = mempty}
-  mappend x y =
-    Ini {iniGlobals = mempty, iniSections = iniSections x <> iniSections y}
+  mappend = (<>)
+
 
 {-# DEPRECATED #-}
 unIni :: Ini -> HashMap Text (HashMap Text Text)
