@@ -6,15 +6,16 @@ description:         Quick and easy configuration files in the INI format.
 license:             BSD3
 license-file:        LICENSE
 author:              Chris Done
-maintainer:          chrisdone@gmail.com
-homepage:            http://github.com/chrisdone/ini
-bug-reports:         http://github.com/chrisdone/ini/issues
+maintainer:          Andreas Abel
+homepage:            https://github.com/andreasabel/ini
+bug-reports:         https://github.com/andreasabel/ini/issues
 copyright:           2013 Chris Done
 category:            Data, Configuration
 build-type:          Simple
 
 tested-with:
-  GHC == 9.2.2
+  GHC == 9.4.1
+  GHC == 9.2.3
   GHC == 9.0.2
   GHC == 8.10.7
   GHC == 8.8.4
@@ -41,8 +42,11 @@ library
 
   default-language:   Haskell98
   default-extensions: OverloadedStrings
+                      TypeOperators
 
   ghc-options:        -Wall
+  if impl(ghc >= 8)
+    ghc-options:      -Wcompat
 
 test-suite ini-test
   type: exitcode-stdio-1.0
@@ -57,4 +61,4 @@ test-suite ini-test
 
 source-repository head
   type:     git
-  location: http://github.com/chrisdone/ini.git
+  location: https://github.com/andreasabel/ini.git
