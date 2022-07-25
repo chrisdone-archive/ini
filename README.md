@@ -1,5 +1,10 @@
-ini [![Hackage](https://img.shields.io/hackage/v/ini.svg?style=flat)](https://hackage.haskell.org/package/ini)
-=====
+[![Hackage](https://img.shields.io/hackage/v/ini.svg?color=informational)](https://hackage.haskell.org/package/ini)
+[![ini on Stackage Nightly](https://stackage.org/package/ini/badge/nightly)](https://stackage.org/nightly/package/ini)
+[![Stackage LTS version](https://www.stackage.org/package/ini/badge/lts?label=Stackage)](https://www.stackage.org/package/ini)
+[![Haskell CI](https://github.com/andreasabel/ini/actions/workflows/haskell.yml/badge.svg)](https://github.com/andreasabel/ini/actions/workflows/haskell.yml)
+
+ini
+===
 
 Quick and easy configuration files in the INI format for Haskell.
 

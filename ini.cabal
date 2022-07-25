@@ -1,6 +1,6 @@
 cabal-version:       >= 1.10
 name:                ini
-version:             0.4.2.1
+version:             0.4.2
 synopsis:            Configuration files in the INI format.
 description:         Quick and easy configuration files in the INI format.
 license:             BSD3
@@ -30,6 +30,10 @@ tested-with:
   GHC == 7.2.2
   GHC == 7.0.4
 
+extra-source-files:
+  CHANGELOG.md
+  README.md
+
 library
   hs-source-dirs:    src/
   exposed-modules:   Data.Ini
@@ -38,7 +42,7 @@ library
                      text,
                      unordered-containers
   if !impl(ghc >= 8)
-    build-depends: semigroups >= 0.10 && < 0.19
+    build-depends: semigroups >= 0.10 && < 0.21
 
   default-language:   Haskell98
   default-extensions: OverloadedStrings
