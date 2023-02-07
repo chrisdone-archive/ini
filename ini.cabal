@@ -1,6 +1,6 @@
 cabal-version:       >= 1.10
 name:                ini
-version:             0.4.2
+version:             0.5.0
 synopsis:            Configuration files in the INI format.
 description:         Quick and easy configuration files in the INI format.
 license:             BSD3

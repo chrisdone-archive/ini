@@ -1,3 +1,20 @@
+## 0.5.0
+
+_2023-02-08, Chris Martin_
+
+The behavior of `(<>)` for the `Ini` type has changed
+[#2](https://github.com/andreasabel/ini/issues/2)
+
+- `<>` previously discarded all `iniGlobals`. Now it concatenates
+  the globals from the two `Ini` values.
+
+- When two `Ini` values contained `iniSections` with the same name,
+  `<>` previously returned the section from the left value and
+  discarded the section of the same name from the right value.
+  Now it concatenates the sections of the same name.
+
+Tested with GHC 7.0 - ghc-9.6.0.20230128.
+
 ## 0.4.2
 
 _2022-07-26, Andreas Abel_
