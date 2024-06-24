@@ -89,13 +89,18 @@ data Ini =
     }
   deriving (Show, Eq)
 
+-- | '<>' concatenates the lists of entries within each section (since @ini-0.5.0@)
 instance Semigroup Ini where
-  (<>) = mappend
+  x <> y =
+    Ini
+      { iniGlobals = iniGlobals x ++ iniGlobals y
+      , iniSections = M.unionWith (++) (iniSections x) (iniSections y)
+      }
 
 instance Monoid Ini where
   mempty = Ini {iniGlobals = mempty, iniSections = mempty}
-  mappend x y =
-    Ini {iniGlobals = mempty, iniSections = iniSections x <> iniSections y}
+  mappend = (<>)
+
 
 {-# DEPRECATED #-}
 unIni :: Ini -> HashMap Text (HashMap Text Text)
